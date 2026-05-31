@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     formats: ["image/avif", "image/webp"],
+    // Cache optimised images on Vercel's CDN for a year so repeat visits and
+    // re-renders serve instantly instead of re-optimising on every request.
+    minimumCacheTTL: 31536000,
   },
 };
 
