@@ -7,9 +7,9 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import SmartImage from "@/components/ui/SmartImage";
 import HorseMark from "@/components/HorseMark";
 import { IconArrowRight } from "@/components/Icons";
-import { products } from "@/content/products";
 import { formatMAD } from "@/lib/utils";
 import type { ImageKey } from "@/lib/images";
+import type { Product } from "@/content/products";
 
 const order = ["veste-de-concours", "tapis-de-selle", "sweat-nova"];
 const heroBySlug: Record<string, { image: ImageKey; position: string }> = {
@@ -18,12 +18,16 @@ const heroBySlug: Record<string, { image: ImageKey; position: string }> = {
   "sweat-nova": { image: "sweat-back-2", position: "50% 30%" },
 };
 
-const chapters = order.map((slug, i) => {
-  const p = products.find((x) => x.slug === slug)!;
-  return { ...p, n: String(i + 1).padStart(2, "0"), ...heroBySlug[slug] };
-});
-
-export default function PiecesScroll() {
+export default function PiecesScroll({ products }: { products: Product[] }) {
+  const bySlug = new Map(products.map((p) => [p.slug, p]));
+  const chapters = order
+    .map((slug, i) => {
+      const p = bySlug.get(slug);
+      return p
+        ? { ...p, n: String(i + 1).padStart(2, "0"), ...heroBySlug[slug] }
+        : null;
+    })
+    .filter((c): c is NonNullable<typeof c> => c !== null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const progressRef = useRef<HTMLSpanElement>(null);

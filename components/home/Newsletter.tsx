@@ -6,14 +6,16 @@ import MaskedHeading from "@/components/ui/MaskedHeading";
 import Reveal from "@/components/ui/Reveal";
 import HorseMark from "@/components/HorseMark";
 import { IconArrowRight, IconCheck } from "@/components/Icons";
+import { subscribeEmail } from "@/lib/actions/leads";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return;
+    await subscribeEmail(email);
     setDone(true);
   };
 

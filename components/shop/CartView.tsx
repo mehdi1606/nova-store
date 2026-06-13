@@ -19,7 +19,6 @@ const FREE_SHIPPING = 800;
 
 export default function CartView() {
   const [mounted, setMounted] = useState(false);
-  const [checkout, setCheckout] = useState(false);
   const items = useCart((s) => s.items);
   const remove = useCart((s) => s.remove);
   const setQty = useCart((s) => s.setQty);
@@ -167,25 +166,19 @@ export default function CartView() {
               </span>
             </div>
 
-            <button
-              onClick={() => setCheckout(true)}
+            <Link
+              href="/commande"
               data-cursor="hover"
               className="group mt-6 flex w-full items-center justify-center gap-3 rounded-[2px] bg-ink py-4 label text-paper transition-colors hover:bg-ink-deep"
             >
-              Passer au paiement
+              Passer la commande
               <IconArrowRight className="size-4 transition-transform duration-500 group-hover:translate-x-1" />
-            </button>
+            </Link>
 
-            {checkout && (
-              <p className="mt-4 text-center text-[0.8rem] leading-relaxed text-ink/70">
-                Le paiement en ligne arrive très bientôt. Pour commander dès
-                maintenant,{" "}
-                <Link href="/contact" className="u-link font-medium text-ink" data-cursor="hover">
-                  écrivez-nous
-                </Link>
-                .
-              </p>
-            )}
+            <p className="mt-4 flex items-center justify-center gap-2 text-center text-[0.8rem] text-ink/65">
+              <IconTruck className="size-4 shrink-0 text-or" />
+              Paiement à la livraison · commande sur WhatsApp
+            </p>
 
             <Link
               href="/boutique"

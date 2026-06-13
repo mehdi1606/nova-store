@@ -9,8 +9,12 @@ import Savoirfaire from "@/components/home/Savoirfaire";
 import JournalTeaser from "@/components/home/JournalTeaser";
 import Communaute from "@/components/home/Communaute";
 import Newsletter from "@/components/home/Newsletter";
+import { getCatalog } from "@/lib/catalog";
 
-export default function Home() {
+export const revalidate = 300;
+
+export default async function Home() {
+  const products = await getCatalog();
   return (
     <>
       <Hero />
@@ -18,7 +22,7 @@ export default function Home() {
       <Manifesto />
       <Categories />
       <HistoireTeaser />
-      <PiecesScroll />
+      <PiecesScroll products={products} />
       <LookFeature />
       <Savoirfaire />
       <JournalTeaser />

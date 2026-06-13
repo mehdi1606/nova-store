@@ -4,6 +4,7 @@ import { useState } from "react";
 import Reveal from "@/components/ui/Reveal";
 import HorseMark from "@/components/HorseMark";
 import { IconArrowRight, IconCheck } from "@/components/Icons";
+import { sendContactMessage } from "@/lib/actions/leads";
 
 const subjects = [
   "Une commande",
@@ -20,8 +21,9 @@ export default function ContactForm() {
   const [message, setMessage] = useState("");
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return setError("Indiquez votre nom.");
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
@@ -29,6 +31,12 @@ export default function ContactForm() {
     if (message.trim().length < 10)
       return setError("Votre message est un peu court.");
     setError(null);
+    setSending(true);
+    const res = await sendContactMessage({ name, email, subject, message });
+    setSending(false);
+    if (!res.ok) {
+      return setError("L'envoi a échoué. Réessayez dans un instant.");
+    }
     setDone(true);
   };
 
@@ -135,10 +143,11 @@ export default function ContactForm() {
 
       <button
         type="submit"
+        disabled={sending}
         data-cursor="hover"
-        className="group mt-7 flex w-full items-center justify-center gap-3 rounded-[2px] bg-ink py-4 label text-paper transition-colors hover:bg-ink-deep sm:w-auto sm:px-10"
+        className="group mt-7 flex w-full items-center justify-center gap-3 rounded-[2px] bg-ink py-4 label text-paper transition-colors hover:bg-ink-deep disabled:opacity-60 sm:w-auto sm:px-10"
       >
-        Envoyer le message
+        {sending ? "Envoi…" : "Envoyer le message"}
         <IconArrowRight className="size-4 transition-transform duration-500 group-hover:translate-x-1" />
       </button>
     </form>

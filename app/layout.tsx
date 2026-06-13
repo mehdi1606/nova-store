@@ -2,12 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Hanken_Grotesk } from "next/font/google";
 import "./globals.css";
 
-import SmoothScroll from "@/components/SmoothScroll";
-import Cursor from "@/components/Cursor";
-import Preloader from "@/components/Preloader";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import CartDrawer from "@/components/CartDrawer";
+import AppShell from "@/components/AppShell";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -91,13 +86,7 @@ export default function RootLayout({
       className={`${fraunces.variable} ${hanken.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="grain flex min-h-screen flex-col">
-        <SmoothScroll />
-        <Cursor />
-        <Preloader />
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <CartDrawer />
+        <AppShell>{children}</AppShell>
       </body>
     </html>
   );

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProduct, allSlugs } from "@/content/products";
+import { allSlugs } from "@/content/products";
+import { getProductBySlug } from "@/lib/catalog";
 import { img } from "@/lib/images";
 import ProductGallery from "@/components/shop/ProductGallery";
 import BuyBox from "@/components/shop/BuyBox";
@@ -9,6 +10,8 @@ import CrossSell from "@/components/shop/CrossSell";
 import MediaFrame from "@/components/ui/MediaFrame";
 import Reveal from "@/components/ui/Reveal";
 import HorseMark from "@/components/HorseMark";
+
+export const revalidate = 300;
 
 export function generateStaticParams() {
   return allSlugs.map((slug) => ({ slug }));
@@ -20,7 +23,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const p = getProduct(slug);
+  const p = await getProductBySlug(slug);
   if (!p) return {};
   const hero = img(p.hero);
   return {
@@ -42,7 +45,7 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProduct(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
   const jsonLd = {

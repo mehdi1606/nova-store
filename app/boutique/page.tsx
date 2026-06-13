@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { products } from "@/content/products";
+import { getCatalog } from "@/lib/catalog";
 import ProductCard from "@/components/shop/ProductCard";
 import LookFeature from "@/components/home/LookFeature";
 import Reveal from "@/components/ui/Reveal";
 import MaskedHeading from "@/components/ui/MaskedHeading";
 import { cn } from "@/lib/utils";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "La Boutique",
@@ -26,7 +28,8 @@ export default async function BoutiquePage({
 }) {
   const { categorie } = await searchParams;
   const active = categorie === "cheval" || categorie === "cavalier" ? categorie : undefined;
-  const list = active ? products.filter((p) => p.category === active) : products;
+  const all = await getCatalog();
+  const list = active ? all.filter((p) => p.category === active) : all;
 
   return (
     <>

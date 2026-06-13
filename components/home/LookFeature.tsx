@@ -3,13 +3,14 @@ import MaskedHeading from "@/components/ui/MaskedHeading";
 import Reveal from "@/components/ui/Reveal";
 import CTA from "@/components/ui/CTA";
 import { IconCheck } from "@/components/Icons";
-import { look, lookTotal, getProduct } from "@/content/products";
+import { look } from "@/content/products";
+import { getLookTotals, getProductsBySlugs } from "@/lib/catalog";
 import { formatMAD } from "@/lib/utils";
 
-export default function LookFeature() {
-  const { full, bundled } = lookTotal();
+export default async function LookFeature() {
+  const { full, bundled } = await getLookTotals();
   const saved = full - bundled;
-  const items = look.items.map((s) => getProduct(s)!).filter(Boolean);
+  const items = await getProductsBySlugs(look.items);
 
   return (
     <section className="section-y relative overflow-hidden bg-ink-deep text-paper">

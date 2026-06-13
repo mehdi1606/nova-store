@@ -1,15 +1,15 @@
-import { getProduct, type Product } from "@/content/products";
+import { getProductsBySlugs } from "@/lib/catalog";
 import ProductCard from "./ProductCard";
 import Reveal from "@/components/ui/Reveal";
 
-export default function CrossSell({
+export default async function CrossSell({
   slugs,
   title = "Complétez la silhouette",
 }: {
   slugs: string[];
   title?: string;
 }) {
-  const items = slugs.map(getProduct).filter(Boolean) as Product[];
+  const items = await getProductsBySlugs(slugs);
   if (!items.length) return null;
 
   return (
