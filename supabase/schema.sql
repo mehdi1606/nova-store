@@ -20,6 +20,13 @@ create table if not exists public.products (
   created_at  timestamptz not null default now()
 );
 
+-- Fields for dashboard-created products (safe to run on an existing table).
+alter table public.products add column if not exists category   text;
+alter table public.products add column if not exists card_image text;
+alter table public.products add column if not exists hero_image text;
+alter table public.products add column if not exists gallery    jsonb default '[]'::jsonb;
+alter table public.products add column if not exists sizes      text;
+
 -- ── Contact-form messages ───────────────────────────────────────────────────
 create table if not exists public.messages (
   id         uuid primary key default gen_random_uuid(),
@@ -84,6 +91,20 @@ create policy "orders insert" on public.orders for insert with check (true);
 create policy "orders read"   on public.orders for select to authenticated using (true);
 create policy "orders update" on public.orders for update
   to authenticated using (true) with check (true);
+
+-- ── Storage bucket for uploaded product photos ──────────────────────────────
+insert into storage.buckets (id, name, public)
+values ('products', 'products', true)
+on conflict (id) do nothing;
+
+drop policy if exists "product images read"  on storage.objects;
+drop policy if exists "product images write" on storage.objects;
+-- Public can view product photos; only a signed-in (owner) account can upload.
+create policy "product images read" on storage.objects
+  for select using (bucket_id = 'products');
+create policy "product images write" on storage.objects
+  for all to authenticated
+  using (bucket_id = 'products') with check (bucket_id = 'products');
 
 -- ── Seed the three current products (so the dashboard mirrors the site) ──────
 insert into public.products (slug, name, tagline, short_desc, description, price_mad, active, sort_order)

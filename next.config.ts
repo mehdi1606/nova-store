@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
     // Cache optimised images on Vercel's CDN for a year so repeat visits and
     // re-renders serve instantly instead of re-optimising on every request.
     minimumCacheTTL: 31536000,
+    // Product photos uploaded from the dashboard live in Supabase Storage.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+    ],
   },
 };
 

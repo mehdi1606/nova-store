@@ -99,7 +99,7 @@ export default async function ProductPage({
           <div className="grid grid-cols-2 gap-4">
             {product.macro.slice(0, 2).map((m, i) => (
               <MediaFrame
-                key={m}
+                key={typeof m === "string" ? m : m.src}
                 image={m}
                 ratio="tall"
                 position="50% 45%"
