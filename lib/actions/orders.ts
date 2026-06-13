@@ -1,12 +1,42 @@
 "use server";
 
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import type { OrderInput } from "@/lib/orders";
+import { buildWhatsAppMessage, type OrderInput } from "@/lib/orders";
 
 /**
- * Persist a cash-on-delivery order to the platform. The WhatsApp hand-off
- * happens on the client regardless — if Supabase isn't configured we simply
- * skip the save and report success, so ordering never breaks.
+ * Push the order straight to the maison's WhatsApp via CallMeBot — a free
+ * service that delivers messages to a number that has authorised it once. This
+ * runs on the server the moment an order is placed, so the owner is notified
+ * automatically, without depending on the customer pressing "send".
+ *
+ * Best-effort: any failure here is swallowed — the order is still saved to the
+ * dashboard, which remains the source of truth. Requires:
+ *   NEXT_PUBLIC_WHATSAPP_NUMBER  (the owner's number, digits)
+ *   CALLMEBOT_APIKEY             (from the one-time CallMeBot activation)
+ */
+async function notifyOwner(order: OrderInput): Promise<void> {
+  const phone = (process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "").replace(
+    /[^\d]/g,
+    "",
+  );
+  const apikey = process.env.CALLMEBOT_APIKEY ?? "";
+  if (!phone || !apikey) return;
+
+  const url =
+    `https://api.callmebot.com/whatsapp.php?phone=${phone}` +
+    `&text=${encodeURIComponent(buildWhatsAppMessage(order))}` +
+    `&apikey=${encodeURIComponent(apikey)}`;
+
+  try {
+    await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(8000) });
+  } catch {
+    /* best-effort notification */
+  }
+}
+
+/**
+ * Store a cash-on-delivery order and notify the owner. The notification and the
+ * save are independent — either can fail without breaking the other.
  */
 export async function placeOrder(input: OrderInput): Promise<{ ok: boolean }> {
   if (
@@ -17,6 +47,9 @@ export async function placeOrder(input: OrderInput): Promise<{ ok: boolean }> {
   ) {
     return { ok: false };
   }
+
+  // Send it directly to the owner's WhatsApp, automatically.
+  await notifyOwner(input);
 
   if (!isSupabaseConfigured) return { ok: true };
 
