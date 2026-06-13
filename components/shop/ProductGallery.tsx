@@ -6,13 +6,13 @@ import SmartImage from "@/components/ui/SmartImage";
 import { IconClose, IconPlus } from "@/components/Icons";
 import { lockScroll } from "@/lib/lenis";
 import { EASE, cn } from "@/lib/utils";
-import type { ImageKey } from "@/lib/images";
+import type { ImageRef } from "@/lib/images";
 
 export default function ProductGallery({
   images,
   name,
 }: {
-  images: ImageKey[];
+  images: ImageRef[];
   name: string;
 }) {
   const [index, setIndex] = useState(0);
@@ -39,7 +39,7 @@ export default function ProductGallery({
       <div className="order-2 mt-3 flex gap-3 overflow-x-auto lg:order-1 lg:mt-0 lg:flex-col lg:overflow-visible no-scrollbar">
         {images.map((img, i) => (
           <button
-            key={img + i}
+            key={(typeof img === "string" ? img : img.src) + i}
             onClick={() => setIndex(i)}
             data-cursor="hover"
             aria-label={`Voir l'image ${i + 1}`}
@@ -126,7 +126,7 @@ export default function ProductGallery({
             <div className="flex justify-center gap-2 px-6 py-5">
               {images.map((img, i) => (
                 <button
-                  key={img + i}
+                  key={(typeof img === "string" ? img : img.src) + i}
                   onClick={() => setIndex(i)}
                   aria-label={`Image ${i + 1}`}
                   data-cursor="hover"

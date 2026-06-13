@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { allSlugs } from "@/content/products";
 import { getProductBySlug } from "@/lib/catalog";
-import { img } from "@/lib/images";
+import { imgRef } from "@/lib/images";
 import ProductGallery from "@/components/shop/ProductGallery";
 import BuyBox from "@/components/shop/BuyBox";
 import CrossSell from "@/components/shop/CrossSell";
@@ -25,7 +25,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const p = await getProductBySlug(slug);
   if (!p) return {};
-  const hero = img(p.hero);
+  const hero = imgRef(p.hero);
   return {
     title: p.name,
     description: p.shortDesc,
@@ -53,7 +53,7 @@ export default async function ProductPage({
     "@type": "Product",
     name: product.name,
     description: product.shortDesc,
-    image: [img(product.hero).src],
+    image: [imgRef(product.hero).src],
     brand: { "@type": "Brand", name: "Nova Cavalia" },
     offers: {
       "@type": "Offer",

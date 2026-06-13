@@ -1,4 +1,4 @@
-import type { ImageKey } from "@/lib/images";
+import type { ImageKey, ImageRef } from "@/lib/images";
 
 export type ColorSwatch = { name: string; hex: string; available: boolean };
 export type Fit = "Femme" | "Homme";
@@ -21,11 +21,11 @@ export type Product = {
   sizesByFit?: Partial<Record<Fit, SizeOption[]>>;
   sizeType: "vetement" | "accessoire";
   sizeNote: string;
-  hero: ImageKey;
-  gallery: ImageKey[];
-  card: ImageKey;
-  cardHover: ImageKey;
-  macro: ImageKey[];
+  hero: ImageRef;
+  gallery: ImageRef[];
+  card: ImageRef;
+  cardHover: ImageRef;
+  macro: ImageRef[];
   details: ProductDetail[];
   crossSell: string[];
   /** homepage editorial chapter image alignment */

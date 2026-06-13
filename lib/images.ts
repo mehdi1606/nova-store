@@ -21,4 +21,12 @@ export function img(key: ImageKey): ImageAsset {
   return a;
 }
 
+/** An image is either a bundled manifest key or a ready-made asset (e.g. uploaded). */
+export type ImageRef = ImageKey | ImageAsset;
+
+/** Resolve any image reference to a concrete asset. */
+export function imgRef(ref: ImageRef): ImageAsset {
+  return typeof ref === "string" ? img(ref) : ref;
+}
+
 export default images;

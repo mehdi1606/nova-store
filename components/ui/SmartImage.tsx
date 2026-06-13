@@ -30,13 +30,13 @@ export default function SmartImage({
   const resolvedAlt = alt ?? a.alt;
   const shared = {
     src: a.src,
-    placeholder: "blur" as const,
-    blurDataURL: a.blur,
     sizes,
     priority,
     quality,
     className: cn("object-cover", grayscale && "grayscale", className),
     style: { objectPosition: position },
+    // Uploaded images may not ship a blur placeholder — fall back gracefully.
+    ...(a.blur ? { placeholder: "blur" as const, blurDataURL: a.blur } : {}),
   };
   return fill ? (
     <Image fill alt={resolvedAlt} {...shared} />

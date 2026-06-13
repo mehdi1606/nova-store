@@ -2,7 +2,7 @@
 
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ImageKey } from "@/lib/images";
+import type { ImageRef } from "@/lib/images";
 
 export type CartItem = {
   id: string; // slug + variant signature
@@ -10,7 +10,7 @@ export type CartItem = {
   name: string;
   price: number;
   qty: number;
-  image: ImageKey;
+  image: ImageRef;
   fit?: string;
   size?: string;
   color: string;

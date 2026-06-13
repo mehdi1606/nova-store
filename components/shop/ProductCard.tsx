@@ -1,7 +1,8 @@
 "use client";
 
+import { useRef } from "react";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import SmartImage from "@/components/ui/SmartImage";
 import { IconArrowUpRight } from "@/components/Icons";
 import { EASE, formatMAD } from "@/lib/utils";
@@ -19,28 +20,25 @@ export default function ProductCard({
   delay?: number;
 }) {
   const reduce = useReducedMotion();
+  const ref = useRef<HTMLAnchorElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.2 });
   const futureColors = product.colors.filter((c) => !c.available).length;
+
+  const hidden = reduce ? { opacity: 0 } : { opacity: 0, scale: 1.03 };
+  const shown = reduce ? { opacity: 1 } : { opacity: 1, scale: 1 };
 
   return (
     <Link
+      ref={ref}
       href={`/produit/${product.slug}`}
       data-cursor="hover"
       className="group block"
     >
       <motion.div
         className="relative aspect-[4/5] w-full overflow-hidden rounded-[var(--radius-xs)] bg-paper-2"
-        initial={
-          reduce
-            ? { opacity: 0 }
-            : { clipPath: "inset(0 0 100% 0)", opacity: 0.6 }
-        }
-        whileInView={
-          reduce
-            ? { opacity: 1 }
-            : { clipPath: "inset(0 0 0% 0)", opacity: 1 }
-        }
-        viewport={{ once: true, amount: 0.25 }}
-        transition={{ duration: 1.1, ease: EASE, delay }}
+        initial={hidden}
+        animate={inView ? shown : hidden}
+        transition={{ duration: 1, ease: EASE, delay }}
       >
         {/* base */}
         <SmartImage
