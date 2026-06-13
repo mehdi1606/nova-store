@@ -76,12 +76,14 @@ export default function Checkout() {
       subtotal,
     };
 
+    // Open WhatsApp synchronously, inside the click gesture, so the browser
+    // doesn't block it as a pop-up. (A new tab keeps this page open to save.)
+    const href = whatsappHref(WHATSAPP_NUMBER, order);
+    if (href) window.open(href, "_blank", "noopener,noreferrer");
+
     setSubmitting(true);
     await placeOrder(order); // persist to the dashboard (no-op if unconfigured)
     setSubmitting(false);
-
-    const href = whatsappHref(WHATSAPP_NUMBER, order);
-    if (href) window.open(href, "_blank", "noopener,noreferrer");
 
     clear();
     setDone({ reference: order.reference, href });
