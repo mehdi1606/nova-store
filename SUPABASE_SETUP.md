@@ -29,7 +29,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=212XXXXXXXXX            (orders WhatsApp — digits 
 ```
 
 > **WhatsApp number:** international format, digits only. A Moroccan number like
-> `0612345678` becomes `212612345678`. This is where customer orders are sent.
+> `0612345678` becomes `212648673266`. This is where customer orders are sent.
 
 ## 3. Create the database tables
 
