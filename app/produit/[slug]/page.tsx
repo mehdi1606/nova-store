@@ -88,7 +88,11 @@ export default async function ProductPage({
       {/* gallery + buy */}
       <section className="edge-x grid grid-cols-1 gap-10 pb-20 lg:grid-cols-2 lg:gap-16">
         <div className="lg:sticky lg:top-28 lg:self-start">
-          <ProductGallery images={product.gallery} name={product.name} />
+          <ProductGallery
+            images={product.gallery}
+            galleryByFit={product.galleryByFit}
+            name={product.name}
+          />
         </div>
         <BuyBox product={product} />
       </section>

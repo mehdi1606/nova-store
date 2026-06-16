@@ -6,46 +6,67 @@ import SmartImage from "@/components/ui/SmartImage";
 import { IconClose, IconPlus } from "@/components/Icons";
 import { lockScroll } from "@/lib/lenis";
 import { EASE, cn } from "@/lib/utils";
+import { useFit } from "@/lib/fit";
 import type { ImageRef } from "@/lib/images";
+import type { Fit } from "@/content/products";
+
+const keyOf = (img: ImageRef, i: number) =>
+  (typeof img === "string" ? img : img.src) + i;
 
 export default function ProductGallery({
   images,
+  galleryByFit,
   name,
 }: {
   images: ImageRef[];
+  galleryByFit?: Partial<Record<Fit, ImageRef[]>>;
   name: string;
 }) {
+  const fit = useFit((s) => s.fit) as Fit | undefined;
+  const imgs =
+    fit && galleryByFit?.[fit]?.length ? galleryByFit[fit]! : images;
+
   const [index, setIndex] = useState(0);
   const [zoom, setZoom] = useState(false);
+
+  // When the fit (and so the image set) changes, return to the first shot.
+  useEffect(() => setIndex(0), [fit]);
 
   useEffect(() => {
     if (!zoom) return;
     lockScroll(true);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setZoom(false);
-      if (e.key === "ArrowRight") setIndex((i) => (i + 1) % images.length);
-      if (e.key === "ArrowLeft") setIndex((i) => (i - 1 + images.length) % images.length);
+      if (e.key === "ArrowRight") setIndex((i) => (i + 1) % imgs.length);
+      if (e.key === "ArrowLeft")
+        setIndex((i) => (i - 1 + imgs.length) % imgs.length);
     };
     window.addEventListener("keydown", onKey);
     return () => {
       lockScroll(false);
       window.removeEventListener("keydown", onKey);
     };
-  }, [zoom, images.length]);
+  }, [zoom, imgs.length]);
+
+  const safeIndex = Math.min(index, imgs.length - 1);
+  const current = imgs[safeIndex];
+  const currentKey = typeof current === "string" ? current : current.src;
 
   return (
     <div className="lg:grid lg:grid-cols-[80px_1fr] lg:gap-4">
       {/* thumbnails */}
       <div className="order-2 mt-3 flex gap-3 overflow-x-auto lg:order-1 lg:mt-0 lg:flex-col lg:overflow-visible no-scrollbar">
-        {images.map((img, i) => (
+        {imgs.map((img, i) => (
           <button
-            key={(typeof img === "string" ? img : img.src) + i}
+            key={keyOf(img, i)}
             onClick={() => setIndex(i)}
             data-cursor="hover"
             aria-label={`Voir l'image ${i + 1}`}
             className={cn(
               "relative aspect-[4/5] w-16 shrink-0 overflow-hidden rounded-[2px] bg-paper-2 ring-1 transition-all lg:w-full",
-              index === i ? "ring-ink" : "ring-transparent opacity-70 hover:opacity-100",
+              safeIndex === i
+                ? "ring-ink"
+                : "ring-transparent opacity-70 hover:opacity-100",
             )}
           >
             <SmartImage image={img} fill sizes="80px" position="50% 30%" />
@@ -63,7 +84,7 @@ export default function ProductGallery({
         >
           <AnimatePresence mode="wait">
             <motion.div
-              key={index}
+              key={currentKey}
               className="absolute inset-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -71,9 +92,9 @@ export default function ProductGallery({
               transition={{ duration: 0.4, ease: EASE }}
             >
               <SmartImage
-                image={images[index]}
+                image={current}
                 fill
-                priority={index === 0}
+                priority={safeIndex === 0}
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 position="50% 28%"
                 className="transition-transform duration-[1.2s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.04]"
@@ -98,7 +119,7 @@ export default function ProductGallery({
           >
             <div className="flex items-center justify-between px-6 py-5 text-paper">
               <span className="label-xs text-paper/80">
-                {name} — {index + 1}/{images.length}
+                {name} — {safeIndex + 1}/{imgs.length}
               </span>
               <button
                 onClick={() => setZoom(false)}
@@ -116,7 +137,7 @@ export default function ProductGallery({
               tabIndex={-1}
             >
               <SmartImage
-                image={images[index]}
+                image={current}
                 fill
                 sizes="100vw"
                 position="50% 30%"
@@ -124,15 +145,17 @@ export default function ProductGallery({
               />
             </div>
             <div className="flex justify-center gap-2 px-6 py-5">
-              {images.map((img, i) => (
+              {imgs.map((img, i) => (
                 <button
-                  key={(typeof img === "string" ? img : img.src) + i}
+                  key={keyOf(img, i)}
                   onClick={() => setIndex(i)}
                   aria-label={`Image ${i + 1}`}
                   data-cursor="hover"
                   className={cn(
                     "h-1.5 rounded-full transition-all duration-300",
-                    index === i ? "w-7 bg-paper" : "w-1.5 bg-paper/40 hover:bg-paper/70",
+                    safeIndex === i
+                      ? "w-7 bg-paper"
+                      : "w-1.5 bg-paper/40 hover:bg-paper/70",
                   )}
                 />
               ))}

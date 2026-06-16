@@ -15,6 +15,7 @@ import {
 import SizeGuide from "./SizeGuide";
 import CareAccordion from "./CareAccordion";
 import type { Product, Fit, SizeOption } from "@/content/products";
+import { useFit } from "@/lib/fit";
 
 const reassurance = [
   { icon: IconTruck, text: "Livraison offerte au Maroc dès 800 Dhs" },
@@ -24,6 +25,7 @@ const reassurance = [
 
 export default function BuyBox({ product }: { product: Product }) {
   const add = useCart((s) => s.add);
+  const publishFit = useFit((s) => s.setFit);
   const [color, setColor] = useState(
     product.colors.find((c) => c.available) ?? product.colors[0],
   );
@@ -41,6 +43,7 @@ export default function BuyBox({ product }: { product: Product }) {
     : product.sizes ?? [];
 
   useEffect(() => setSize(undefined), [fit]);
+  useEffect(() => publishFit(fit), [fit, publishFit]);
 
   useEffect(() => {
     const el = ctaRef.current;

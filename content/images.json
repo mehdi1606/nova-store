@@ -67,7 +67,7 @@
     "w": 1333,
     "h": 2000,
     "blur": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAADQAwCdASoQABgAPu1iqU2ppaQiMAgBMB2JZQDE2BcU/61OzHWEl/QA/kvdL3GSufUXq0qGLnb12k97KXEm/l4t0CjuhaYO0afUp21xugAAAA==",
-    "alt": "Tapis de selle matelasse marine, passepoil corde creme",
+    "alt": "Cheval portant le tapis de selle marine Nova Cavalia",
     "role": "product",
     "source": "DSC03910.jpg"
   },
@@ -412,5 +412,23 @@
     "alt": "Le look complet Nova Cavalia en situation",
     "role": "editorial",
     "source": "DSC03695.jpg"
+  },
+  "veste-homme-3": {
+    "src": "/images/veste-homme-3.webp",
+    "w": 1334,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAACQAwCdASoQABgAPu1iqU2ppaOiMAgBMB2JQBOgA9CLZX5a6YsAANoImK0MNZJq/9rFnIzkT/CKUDcBQZIwz982DNWgcXqdL+ZbKjFZymJnPtCAAAA=",
+    "alt": "Cavalier en veste de concours marine Nova Cavalia",
+    "role": "product",
+    "source": "téléchargement.webp"
+  },
+  "veste-homme-mounted": {
+    "src": "/images/veste-homme-mounted.webp",
+    "w": 1334,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADwAgCdASoQABgAA4BaJagCdMoMYAJL8h4dCnm7ILh1QAD9zmTGazjzFShdzfVVpf5lNxnCxvz9+pVExGk64Ml/FfVnvcxMJ1FL51mnQQr68rZGAyJ19/7tyq4QYKEuw1VNgAAA",
+    "alt": "Cavalier en veste de concours, en selle",
+    "role": "product",
+    "source": "vistinhorse.webp"
   }
 }

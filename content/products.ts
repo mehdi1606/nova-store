@@ -23,6 +23,8 @@ export type Product = {
   sizeNote: string;
   hero: ImageRef;
   gallery: ImageRef[];
+  /** optional per-fit galleries — the gallery swaps when the fit is toggled */
+  galleryByFit?: Partial<Record<Fit, ImageRef[]>>;
   card: ImageRef;
   cardHover: ImageRef;
   macro: ImageRef[];
@@ -66,13 +68,31 @@ export const products: Product[] = [
     sizeNote: "Coupe ajustée. Si vous hésitez, prenez votre taille habituelle.",
     hero: "veste-studio",
     gallery: [
-      "veste-studio",
-      "veste-homme-studio",
       "veste-femme-1",
       "veste-femme-2",
+      "veste-femme-3",
+      "veste-studio",
       "veste-macro-sleeve",
       "veste-macro-buttons",
     ],
+    galleryByFit: {
+      Femme: [
+        "veste-femme-1",
+        "veste-femme-2",
+        "veste-femme-3",
+        "veste-studio",
+        "veste-macro-sleeve",
+        "veste-macro-buttons",
+      ],
+      Homme: [
+        "veste-homme-studio",
+        "veste-homme-1",
+        "veste-homme-2",
+        "veste-homme-3",
+        "veste-homme-mounted",
+        "veste-macro-cuff",
+      ],
+    },
     card: "veste-femme-3",
     cardHover: "veste-homme-2",
     macro: ["veste-macro-sleeve", "veste-macro-cuff", "veste-macro-buttons"],
