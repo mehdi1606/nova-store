@@ -28,12 +28,19 @@ type Slide = {
 const slides: Slide[] = [
   { image: "ed-1", position: "50% 32%", label: "Concours", title: "L'instant" },
   { image: "ed-look", position: "50% 22%", label: "Allure", title: "La silhouette" },
+  { image: "hero-arena", position: "50% 30%", label: "Aube", title: "La carrière" },
   { image: "ed-stable", position: "50% 38%", label: "Écurie", title: "Au repos" },
+  { image: "ed-2", position: "50% 30%", label: "Terrain", title: "Le concours" },
   { image: "ed-arena", position: "50% 30%", label: "Carrière", title: "L'échauffement" },
   { image: "ed-5", position: "50% 30%", label: "Lien", title: "La complicité" },
   { image: "ed-bw-1", position: "50% 24%", label: "Studio", title: "Le portrait" },
+  { image: "veste-lifestyle", position: "50% 30%", label: "Côte à côte", title: "Le duo" },
   { image: "ed-3", position: "50% 28%", label: "Aube", title: "La lumière" },
+  { image: "ed-4", position: "50% 25%", label: "Avant l'épreuve", title: "Le calme" },
+  { image: "hero-mounted", position: "50% 30%", label: "En selle", title: "L'allure" },
   { image: "hero-grey-walk", position: "50% 30%", label: "Dehors", title: "La sortie" },
+  { image: "sweat-lifestyle", position: "50% 30%", label: "Quotidien", title: "À l'écurie" },
+  { image: "ed-bw-2", position: "50% 28%", label: "Argentique", title: "L'assiette" },
   { image: "ed-look-2", position: "50% 26%", label: "Capsule", title: "En mouvement" },
 ];
 
