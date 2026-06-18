@@ -430,5 +430,59 @@
     "alt": "Cavalier en veste de concours, en selle",
     "role": "product",
     "source": "vistinhorse.webp"
+  },
+  "veste-homme-4": {
+    "src": "/images/veste-homme-4.webp",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADwAwCdASoQABgAPu1iqU2ppaQiMAgBMB2JZACdAB4DrJ0UtFnLMcHAAP0ZZa8cqcN82f4Yr16siQipSZ/LTbc7hgpe8/j3ZGX69gUrxyOZl1V4QcNg4sirrHSj3kQPcokD7IAA",
+    "alt": "Cavalier en veste de concours marine, profil",
+    "role": "product",
+    "source": "veste-homme-4.webp"
+  },
+  "veste-homme-5": {
+    "src": "/images/veste-homme-5.webp",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAABQBACdASoQABgAPu1iqk4ppaQiMAgBMB2JZACdMoAC5RzRnmDXxmH9KQYAAPpxNx980GW3mk4l95H0bTUgMMLoopNYfCWC8ppZJEQpREB6hR9FVfmvMF7czN4GYAya3czrX6cAAAA=",
+    "alt": "Cavalier en veste de concours marine Nova Cavalia",
+    "role": "product",
+    "source": "veste-homme-5.webp"
+  },
+  "sweat-look-1": {
+    "src": "/images/sweat-look-1.webp",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAABQBACdASoQABgAPu1iqk2ppaQiMAgBMB2JYgCdMoACrgLpj+szHzQY5W4AAP7BX+iuge6k6TbMYzYdxLfcyXOXvfBnw8Gm+uBb4GMj9Kke62FF9BnzB7WKYYjxPDLONQLeAAAA",
+    "alt": "Cavalier en sweat Nova Cavalia",
+    "role": "product",
+    "source": "DSC03680.webp"
+  },
+  "sweat-look-2": {
+    "src": "/images/sweat-look-2.webp",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAABwBACdASoQABgAPu1iqU2ppaOiMAgBMB2JZgCdMoAC8N37qDScfNzrztKokAD8ghHLLYpe2XJeoysv1M1BoJVgHk3pc094MwY/HgvZu1EgEqtj34PiZaOgDrsPOTRTo4Zs9vUM7NusEIpgAAA=",
+    "alt": "Sweat Nova Cavalia porté à l'écurie",
+    "role": "product",
+    "source": "DSC03743.webp"
+  },
+  "sweat-look-3": {
+    "src": "/images/sweat-look-3.webp",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAwBACdASoQABgAPu1iqU2ppaQiMAgBMB2JZgCdABXb50pRbyR/73qluKAA276WSTer3AtjuBxITgGeb1HaMh4/m0/k76eh0cFyoQaYnekv9/M/ofZH4A5vJs3t2SP2Wxf6D7i8+c/5YWDKAAA=",
+    "alt": "Sweat Nova Cavalia, dos brodé en situation",
+    "role": "product",
+    "source": "DSC03747.webp"
+  },
+  "sweat-look-4": {
+    "src": "/images/sweat-look-4.webp",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAAAQBACdASoQABgAPu1iqU2ppaOiMAgBMB2JaACdOUAAmJ4J67buT8+v8AD+d0bqJPdzS6K/rmsQrlSgUZZ770oSdkmmhlqjfgzYLxwDOVdG71cvdRAmxTFKMv8vAzPwGukUCypfR4AAAA==",
+    "alt": "Sweat Nova Cavalia, scène d'écurie",
+    "role": "product",
+    "source": "DSC03785.webp"
   }
 }

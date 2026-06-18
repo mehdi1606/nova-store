@@ -75,7 +75,9 @@ export default function ProductCard({
           <p className="mt-1.5 text-sm text-ink/55">{product.tagline}</p>
         </div>
         <span className="shrink-0 pt-1 font-display text-lg font-[380] tabular-nums text-ink">
-          {formatMAD(product.priceMAD)}
+          {product.priceByFit
+            ? `dès ${formatMAD(product.priceMAD)}`
+            : formatMAD(product.priceMAD)}
         </span>
       </div>
 

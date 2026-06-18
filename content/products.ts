@@ -12,6 +12,10 @@ export type Product = {
   eyebrow: string;
   tagline: string;
   priceMAD: number;
+  /** optional per-fit prices, e.g. a women's cut vs a men's cut */
+  priceByFit?: Partial<Record<Fit, number>>;
+  /** optional audience tag shown on the product page, e.g. "Unisexe" */
+  audience?: string;
   shortDesc: string;
   description: string;
   story: string;
@@ -51,7 +55,8 @@ export const products: Product[] = [
     category: "cavalier",
     eyebrow: "Collection Capsule 2026",
     tagline: "L'allure du concours, l'aisance du quotidien.",
-    priceMAD: 1890,
+    priceMAD: 2079,
+    priceByFit: { Femme: 2079, Homme: 3079 },
     shortDesc:
       "La pièce maîtresse du cavalier. Coupe ajustée marine, cheval brodé sur la manche.",
     description:
@@ -73,7 +78,7 @@ export const products: Product[] = [
       "veste-femme-3",
       "veste-studio",
       "veste-macro-sleeve",
-      "veste-macro-buttons",
+      "veste-macro-cuff",
     ],
     galleryByFit: {
       Femme: [
@@ -82,15 +87,15 @@ export const products: Product[] = [
         "veste-femme-3",
         "veste-studio",
         "veste-macro-sleeve",
-        "veste-macro-buttons",
+        "veste-macro-cuff",
       ],
       Homme: [
-        "veste-homme-studio",
         "veste-homme-1",
         "veste-homme-2",
         "veste-homme-3",
+        "veste-homme-5",
+        "veste-homme-studio",
         "veste-homme-mounted",
-        "veste-macro-cuff",
       ],
     },
     card: "veste-femme-3",
@@ -119,7 +124,7 @@ export const products: Product[] = [
     category: "cheval",
     eyebrow: "Collection Capsule 2026",
     tagline: "Le confort du cheval, la signature de la maison.",
-    priceMAD: 690,
+    priceMAD: 679,
     shortDesc:
       "Matelassé marine, passepoil corde crème, cheval brodé. Pensé pour le dos du cheval.",
     description:
@@ -127,10 +132,6 @@ export const products: Product[] = [
     story:
       "Le premier regard se pose toujours sur le cheval. Le tapis Nova Cavalia l'accompagne d'une ligne nette, d'une corde crème et d'un confort pensé pour l'effort.",
     colors: [NAVY, ...SOON],
-    sizes: [
-      { label: "Cob", available: true },
-      { label: "Full", available: true },
-    ],
     sizeType: "accessoire",
     sizeNote: "Cob pour les chevaux légers et poneys ; Full pour les chevaux de selle.",
     hero: "tapis-studio",
@@ -139,8 +140,8 @@ export const products: Product[] = [
       "tapis-on-horse",
       "tapis-placing",
       "tapis-detail",
-      "tapis-hanging",
       "tapis-mounted",
+      "tapis-hanging",
     ],
     card: "tapis-studio",
     cardHover: "tapis-on-horse",
@@ -168,7 +169,8 @@ export const products: Product[] = [
     category: "cavalier",
     eyebrow: "Collection Capsule 2026",
     tagline: "L'écurie au quotidien.",
-    priceMAD: 790,
+    priceMAD: 579,
+    audience: "Unisexe",
     shortDesc:
       "Marine, script crème brodé au cœur, grand cheval corde au dos. La maille du club.",
     description:
@@ -181,12 +183,12 @@ export const products: Product[] = [
     sizeNote: "Coupe droite, légèrement oversize. Prenez votre taille habituelle.",
     hero: "sweat-studio",
     gallery: [
-      "sweat-studio",
       "sweat-homme-front",
       "sweat-back",
-      "sweat-back-2",
-      "sweat-macro-back",
-      "sweat-mounted",
+      "sweat-look-1",
+      "sweat-look-2",
+      "sweat-look-3",
+      "sweat-look-4",
     ],
     card: "sweat-homme-front",
     cardHover: "sweat-back-2",
@@ -217,7 +219,7 @@ export type LookBundle = {
   hero: ImageKey;
   secondary: ImageKey;
   items: string[];
-  discountRate: number; // applied to the sum
+  savings: number; // flat amount saved on the bundle (MAD)
 };
 
 export const look: LookBundle = {
@@ -228,7 +230,7 @@ export const look: LookBundle = {
   hero: "ed-look",
   secondary: "veste-lifestyle",
   items: ["veste-de-concours", "tapis-de-selle", "sweat-nova"],
-  discountRate: 0.1,
+  savings: 340,
 };
 
 export function getProduct(slug: string): Product | undefined {
@@ -243,7 +245,7 @@ export function lookTotal(): { full: number; bundled: number } {
   const full = look.items
     .map((s) => getProduct(s)?.priceMAD ?? 0)
     .reduce((a, b) => a + b, 0);
-  return { full, bundled: Math.round((full * (1 - look.discountRate)) / 10) * 10 };
+  return { full, bundled: full - look.savings };
 }
 
 export const allSlugs = products.map((p) => p.slug);

@@ -22,7 +22,22 @@ export type OrderInput = {
   note?: string;
   items: OrderItem[];
   subtotal: number;
+  promo_code?: string | null;
+  discount?: number;
 };
+
+export type PromoKind = "percent" | "fixed";
+
+/** Discount in MAD for a subtotal, capped so the total never goes below 0. */
+export function promoDiscount(
+  subtotal: number,
+  kind: PromoKind,
+  value: number,
+): number {
+  if (!value || value <= 0) return 0;
+  const raw = kind === "percent" ? Math.round((subtotal * value) / 100) : value;
+  return Math.max(0, Math.min(raw, subtotal));
+}
 
 /** Short, human-friendly order reference, e.g. "NC-7Q4K". */
 export function makeOrderRef(): string {
@@ -51,11 +66,15 @@ export function buildWhatsAppMessage(o: OrderInput): string {
     );
   }
   lines.push("");
-  lines.push(`Total : ${formatMAD(o.subtotal)}`);
+  const discount = o.discount ?? 0;
+  const total = o.subtotal - discount;
+  if (discount > 0) {
+    lines.push(`Sous-total : ${formatMAD(o.subtotal)}`);
+    lines.push(`Code promo ${o.promo_code ?? ""} : -${formatMAD(discount)}`);
+  }
+  lines.push(`Total : ${formatMAD(total)}`);
   lines.push(
-    o.subtotal >= FREE_SHIPPING
-      ? "Livraison : offerte"
-      : "Livraison : à confirmer",
+    total >= FREE_SHIPPING ? "Livraison : offerte" : "Livraison : à confirmer",
   );
   if (o.note?.trim()) {
     lines.push("");

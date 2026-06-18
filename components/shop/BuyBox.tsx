@@ -42,6 +42,8 @@ export default function BuyBox({ product }: { product: Product }) {
     ? product.sizesByFit?.[fit as Fit] ?? []
     : product.sizes ?? [];
 
+  const price = product.priceByFit?.[fit as Fit] ?? product.priceMAD;
+
   useEffect(() => setSize(undefined), [fit]);
   useEffect(() => publishFit(fit), [fit, publishFit]);
 
@@ -57,7 +59,7 @@ export default function BuyBox({ product }: { product: Product }) {
   }, []);
 
   const onAdd = () => {
-    if (!size) {
+    if (sizes.length > 0 && !size) {
       setError(true);
       ctaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       return;
@@ -69,7 +71,7 @@ export default function BuyBox({ product }: { product: Product }) {
         id,
         slug: product.slug,
         name: product.name,
-        price: product.priceMAD,
+        price,
         image: product.card,
         color: color.name.split(" — ")[0],
         fit,
@@ -83,6 +85,11 @@ export default function BuyBox({ product }: { product: Product }) {
   return (
     <div>
       <span className="label text-leather">{product.eyebrow}</span>
+      {product.audience && (
+        <span className="ml-3 rounded-full border border-ink/20 px-2.5 py-0.5 text-[0.62rem] uppercase tracking-wider text-ink/55">
+          {product.audience}
+        </span>
+      )}
       <h1 className="mt-3 font-display text-[clamp(2rem,4vw,3.2rem)] font-[380] leading-[1.02] text-ink">
         {product.name}
       </h1>
@@ -90,7 +97,7 @@ export default function BuyBox({ product }: { product: Product }) {
         {product.tagline}
       </p>
       <p className="mt-5 font-display text-2xl font-[380] tabular-nums text-ink">
-        {formatMAD(product.priceMAD)}
+        {formatMAD(price)}
       </p>
       <p className="mt-5 max-w-prose text-[0.95rem] leading-relaxed text-ink/75">
         {product.description}
@@ -153,7 +160,8 @@ export default function BuyBox({ product }: { product: Product }) {
         </div>
       )}
 
-      {/* size */}
+      {/* size — hidden when the product has no size options (e.g. accessories) */}
+      {sizes.length > 0 && (
       <div className="mt-9">
         <div className="flex items-baseline justify-between">
           <span className="label-xs text-ink">Taille</span>
@@ -206,6 +214,7 @@ export default function BuyBox({ product }: { product: Product }) {
           )}
         </AnimatePresence>
       </div>
+      )}
 
       {/* qty + add */}
       <div ref={ctaRef} className="mt-9 flex items-stretch gap-3">
@@ -234,7 +243,7 @@ export default function BuyBox({ product }: { product: Product }) {
           data-cursor="hover"
           className="group flex flex-1 items-center justify-center gap-3 rounded-[2px] bg-ink py-4 label text-paper transition-colors hover:bg-ink-deep"
         >
-          Ajouter au panier — {formatMAD(product.priceMAD * qty)}
+          Ajouter au panier — {formatMAD(price * qty)}
         </button>
       </div>
 
@@ -277,7 +286,7 @@ export default function BuyBox({ product }: { product: Product }) {
                   {product.name}
                 </p>
                 <p className="label-xs tabular-nums text-ink/60">
-                  {formatMAD(product.priceMAD)}
+                  {formatMAD(price)}
                   {size ? ` · ${size}` : ""}
                 </p>
               </div>

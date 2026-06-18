@@ -9,6 +9,7 @@ const nav = [
   { href: "/admin", label: "Tableau de bord" },
   { href: "/admin/orders", label: "Commandes" },
   { href: "/admin/products", label: "Produits" },
+  { href: "/admin/promos", label: "Codes promo" },
   { href: "/admin/messages", label: "Messages" },
   { href: "/admin/subscribers", label: "Abonnés" },
 ];

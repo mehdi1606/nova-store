@@ -185,9 +185,6 @@ export const getLookTotals = cache(
   async (): Promise<{ full: number; bundled: number }> => {
     const rows = await fetchRows();
     const full = look.items.reduce((sum, s) => sum + priceOf(rows, s), 0);
-    return {
-      full,
-      bundled: Math.round((full * (1 - look.discountRate)) / 10) * 10,
-    };
+    return { full, bundled: full - look.savings };
   },
 );

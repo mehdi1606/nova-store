@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { animate, useMotionValue } from "framer-motion";
 import Link from "next/link";
 import { useCart, cartSubtotal, cartCount } from "@/lib/cart";
 import { formatMAD } from "@/lib/utils";
@@ -8,10 +9,12 @@ import { WHATSAPP_NUMBER } from "@/lib/supabase/config";
 import {
   makeOrderRef,
   whatsappHref,
+  promoDiscount,
   FREE_SHIPPING,
   type OrderInput,
+  type PromoKind,
 } from "@/lib/orders";
-import { placeOrder } from "@/lib/actions/orders";
+import { placeOrder, applyPromo } from "@/lib/actions/orders";
 import SmartImage from "@/components/ui/SmartImage";
 import HorseMark from "@/components/HorseMark";
 import MaskedHeading from "@/components/ui/MaskedHeading";
@@ -23,6 +26,21 @@ function IconWhatsApp({ className }: { className?: string }) {
       <path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.945C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.207zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.247-.694.247-1.289.173-1.413z" />
     </svg>
   );
+}
+
+/** A Dhs amount that smoothly counts to its latest value (old → new on promo). */
+function AnimatedDhs({ value }: { value: number }) {
+  const mv = useMotionValue(value);
+  const [display, setDisplay] = useState(value);
+  useEffect(() => {
+    const controls = animate(mv, value, {
+      duration: 0.8,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [value, mv]);
+  return <>{formatMAD(display)}</>;
 }
 
 const inputCls =
@@ -44,10 +62,37 @@ export default function Checkout() {
   const [done, setDone] = useState<{ reference: string; href: string | null } | null>(
     null,
   );
+  const [promo, setPromo] = useState("");
+  const [applying, setApplying] = useState(false);
+  const [applied, setApplied] = useState<{
+    code: string;
+    kind: PromoKind;
+    value: number;
+  } | null>(null);
+  const [promoMsg, setPromoMsg] = useState<string | null>(null);
 
   const subtotal = cartSubtotal(items);
   const count = cartCount(items);
   const freeShipping = subtotal >= FREE_SHIPPING;
+  const discount = applied
+    ? promoDiscount(subtotal, applied.kind, applied.value)
+    : 0;
+  const total = subtotal - discount;
+
+  const onApplyPromo = async () => {
+    const code = promo.trim();
+    if (!code) return;
+    setApplying(true);
+    setPromoMsg(null);
+    const res = await applyPromo(code);
+    setApplying(false);
+    if (!res.ok || !res.kind) {
+      setApplied(null);
+      setPromoMsg("Code invalide ou expiré.");
+      return;
+    }
+    setApplied({ code: code.toUpperCase(), kind: res.kind, value: res.value ?? 0 });
+  };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,6 +119,8 @@ export default function Checkout() {
         color: i.color,
       })),
       subtotal,
+      promo_code: applied?.code ?? null,
+      discount,
     };
 
     // Open WhatsApp synchronously, inside the click gesture, so the browser
@@ -291,11 +338,62 @@ export default function Checkout() {
               ))}
             </ul>
 
-            <dl className="mt-6 space-y-2 border-t border-ink/12 pt-5 text-sm">
+            {/* promo code */}
+            <div className="mt-6 border-t border-ink/12 pt-5">
+              <span className="label-xs text-ink/55">Code promo</span>
+              <div className="mt-2 flex gap-2">
+                <input
+                  value={promo}
+                  onChange={(e) => setPromo(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      onApplyPromo();
+                    }
+                  }}
+                  placeholder="Votre code"
+                  className="w-full rounded-[2px] border border-ink/20 bg-paper px-3 py-2 text-sm uppercase placeholder:normal-case placeholder:text-ink/35 focus:border-ink focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={onApplyPromo}
+                  disabled={applying || !promo.trim()}
+                  className="shrink-0 rounded-[2px] border border-ink/25 px-4 py-2 text-sm transition-colors hover:border-ink disabled:opacity-50"
+                >
+                  {applying ? "…" : "Appliquer"}
+                </button>
+              </div>
+              {applied && (
+                <p className="mt-2 flex flex-wrap items-center gap-1.5 text-sm text-leather">
+                  <IconCheck className="size-4 text-or" />
+                  Code {applied.code} appliqué.
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setApplied(null);
+                      setPromoMsg(null);
+                      setPromo("");
+                    }}
+                    className="text-ink/50 underline hover:text-ink"
+                  >
+                    retirer
+                  </button>
+                </p>
+              )}
+              {promoMsg && <p className="mt-2 text-sm text-leather">{promoMsg}</p>}
+            </div>
+
+            <dl className="mt-5 space-y-2 text-sm">
               <div className="flex justify-between">
                 <dt className="text-ink/65">Sous-total</dt>
                 <dd className="tabular-nums text-ink">{formatMAD(subtotal)}</dd>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-leather">
+                  <dt>Réduction · {applied?.code}</dt>
+                  <dd className="tabular-nums">−{formatMAD(discount)}</dd>
+                </div>
+              )}
               <div className="flex justify-between">
                 <dt className="text-ink/65">Livraison</dt>
                 <dd className="text-ink">
@@ -306,8 +404,15 @@ export default function Checkout() {
 
             <div className="mt-4 flex items-baseline justify-between border-t border-ink/12 pt-4">
               <span className="label-xs text-ink">Total</span>
-              <span className="font-display text-2xl font-[380] tabular-nums text-ink">
-                {formatMAD(subtotal)}
+              <span className="flex items-baseline gap-2">
+                {discount > 0 && (
+                  <span className="text-sm text-stone line-through tabular-nums">
+                    {formatMAD(subtotal)}
+                  </span>
+                )}
+                <span className="font-display text-2xl font-[380] tabular-nums text-ink">
+                  <AnimatedDhs value={total} />
+                </span>
               </span>
             </div>
 

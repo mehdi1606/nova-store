@@ -14,6 +14,8 @@ type OrderRow = {
   note: string | null;
   items: OrderItem[];
   subtotal: number;
+  promo_code: string | null;
+  discount: number;
   status: string;
   created_at: string;
 };
@@ -107,9 +109,19 @@ export default async function AdminOrders() {
                     </p>
                     {o.note && <p className="mt-1 text-ink/55">📝 {o.note}</p>}
                   </div>
-                  <p className="font-display text-xl font-[380] tabular-nums sm:text-right">
-                    {formatMAD(o.subtotal)}
-                  </p>
+                  <div className="sm:text-right">
+                    {o.discount > 0 && (
+                      <p className="text-xs text-ink/45">
+                        <span className="line-through">
+                          {formatMAD(o.subtotal)}
+                        </span>
+                        {o.promo_code ? ` · ${o.promo_code}` : ""}
+                      </p>
+                    )}
+                    <p className="font-display text-xl font-[380] tabular-nums">
+                      {formatMAD(o.subtotal - (o.discount ?? 0))}
+                    </p>
+                  </div>
                 </div>
 
                 <ul className="mt-3 border-t border-ink/10 pt-3 text-sm text-ink/70">

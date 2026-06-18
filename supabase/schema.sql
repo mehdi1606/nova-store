@@ -82,6 +82,10 @@ create table if not exists public.orders (
   created_at    timestamptz not null default now()
 );
 
+-- Promo fields (safe to run on an existing table).
+alter table public.orders add column if not exists promo_code text;
+alter table public.orders add column if not exists discount   integer not null default 0;
+
 alter table public.orders enable row level security;
 drop policy if exists "orders insert" on public.orders;
 drop policy if exists "orders read"   on public.orders;
@@ -91,6 +95,42 @@ create policy "orders insert" on public.orders for insert with check (true);
 create policy "orders read"   on public.orders for select to authenticated using (true);
 create policy "orders update" on public.orders for update
   to authenticated using (true) with check (true);
+
+-- ── Promo codes ─────────────────────────────────────────────────────────────
+create table if not exists public.promo_codes (
+  id         uuid primary key default gen_random_uuid(),
+  code       text        not null unique,
+  kind       text        not null default 'percent',  -- 'percent' | 'fixed'
+  value      integer     not null default 0,           -- percent (1-100) or Dhs
+  active     boolean     not null default true,
+  expires_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+alter table public.promo_codes enable row level security;
+drop policy if exists "promos read"  on public.promo_codes;
+drop policy if exists "promos write" on public.promo_codes;
+-- The code list is private — only the owner can read/manage it.
+create policy "promos read"  on public.promo_codes for select to authenticated using (true);
+create policy "promos write" on public.promo_codes for all
+  to authenticated using (true) with check (true);
+
+-- Customers validate ONE code through this function (no table access), so the
+-- full list of codes is never exposed publicly.
+create or replace function public.validate_promo(p_code text)
+returns table (kind text, value integer)
+language sql
+security definer
+set search_path = public
+as $$
+  select kind, value
+  from public.promo_codes
+  where upper(code) = upper(trim(p_code))
+    and active = true
+    and (expires_at is null or expires_at > now())
+  limit 1;
+$$;
+grant execute on function public.validate_promo(text) to anon, authenticated;
 
 -- ── Storage bucket for uploaded product photos ──────────────────────────────
 insert into storage.buckets (id, name, public)
@@ -115,7 +155,7 @@ values
     'L''allure du concours, l''aisance du quotidien.',
     'La pièce maîtresse du cavalier. Coupe ajustée marine, cheval brodé sur la manche.',
     'Taillée pour la piste et pensée pour durer, la Veste de Concours Nova Cavalia épouse la silhouette sans jamais l''entraver. Le marine profond, la doublure soyeuse et le cheval brodé au fil de soie sur la manche signent une élégance discrète, reconnaissable entre toutes.',
-    1890, true, 0
+    2079, true, 0
   ),
   (
     'tapis-de-selle',
@@ -123,7 +163,7 @@ values
     'Le confort du cheval, la signature de la maison.',
     'Matelassé marine, passepoil corde crème, cheval brodé. Pensé pour le dos du cheval.',
     'Un tapis matelassé qui marie le maintien et la douceur. Le marine profond rehaussé d''un passepoil corde crème et du cheval brodé : une pièce qui habille la monture autant qu''elle la protège. Coutures renforcées, matière respirante, séchage rapide.',
-    690, true, 1
+    679, true, 1
   ),
   (
     'sweat-nova',
@@ -131,6 +171,6 @@ values
     'L''écurie au quotidien.',
     'Marine, script crème brodé au cœur, grand cheval corde au dos. La maille du club.',
     'Le vestiaire informel de la maison. Coton gratté épais, script « Nova Cavalia » brodé crème sur le cœur et la grande signature corde du cheval au dos. À porter du box à la ville, sans jamais quitter l''écurie d''esprit.',
-    790, true, 2
+    579, true, 2
   )
 on conflict (slug) do nothing;

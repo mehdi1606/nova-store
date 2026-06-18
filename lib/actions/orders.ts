@@ -1,7 +1,32 @@
 "use server";
 
 import { isSupabaseConfigured } from "@/lib/supabase/config";
-import { buildWhatsAppMessage, type OrderInput } from "@/lib/orders";
+import {
+  buildWhatsAppMessage,
+  type OrderInput,
+  type PromoKind,
+} from "@/lib/orders";
+
+/** Validate a promo code at checkout. Returns its kind + value, or ok:false. */
+export async function applyPromo(
+  code: string,
+): Promise<{ ok: boolean; kind?: PromoKind; value?: number }> {
+  const trimmed = (code ?? "").trim();
+  if (!trimmed || !isSupabaseConfigured) return { ok: false };
+  try {
+    const { createPublicClient } = await import("@/lib/supabase/public");
+    const supabase = createPublicClient();
+    const { data, error } = await supabase.rpc("validate_promo", {
+      p_code: trimmed,
+    });
+    const row = Array.isArray(data) ? data[0] : null;
+    if (error || !row) return { ok: false };
+    const kind: PromoKind = row.kind === "fixed" ? "fixed" : "percent";
+    return { ok: true, kind, value: Number(row.value) || 0 };
+  } catch {
+    return { ok: false };
+  }
+}
 
 /**
  * Push the order straight to the maison's WhatsApp via CallMeBot — a free
@@ -65,6 +90,8 @@ export async function placeOrder(input: OrderInput): Promise<{ ok: boolean }> {
       note: input.note?.trim() || null,
       items: input.items,
       subtotal: input.subtotal,
+      promo_code: input.promo_code?.trim() || null,
+      discount: input.discount ?? 0,
       status: "nouvelle",
     });
     return { ok: !error };

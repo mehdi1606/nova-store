@@ -174,3 +174,50 @@ export async function deleteProduct(formData: FormData) {
   revalidatePath("/admin/products");
   redirect("/admin/products");
 }
+
+/** Create (or update) a promo code. */
+export async function createPromo(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!isOwner(user?.email)) redirect("/admin/login");
+
+  const code = String(formData.get("code") ?? "").trim().toUpperCase();
+  const kind = String(formData.get("kind") ?? "percent") === "fixed" ? "fixed" : "percent";
+  const value = parseInt(
+    String(formData.get("value") ?? "").replace(/[^\d]/g, ""),
+    10,
+  );
+  if (!code || !Number.isFinite(value) || value <= 0) {
+    throw new Error("Un code et une valeur (> 0) sont requis.");
+  }
+  const expiresRaw = String(formData.get("expires_at") ?? "").trim();
+  const expires_at = expiresRaw ? new Date(expiresRaw).toISOString() : null;
+
+  const { error } = await supabase
+    .from("promo_codes")
+    .upsert(
+      { code, kind, value, active: true, expires_at },
+      { onConflict: "code" },
+    );
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/promos");
+  redirect("/admin/promos");
+}
+
+/** Delete a promo code. */
+export async function deletePromo(formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!isOwner(user?.email)) redirect("/admin/login");
+
+  const id = String(formData.get("id") ?? "");
+  if (!id) return;
+
+  await supabase.from("promo_codes").delete().eq("id", id);
+  revalidatePath("/admin/promos");
+}
