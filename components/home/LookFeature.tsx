@@ -8,9 +8,11 @@ import LookSwitcher, { type LookItem } from "./LookSwitcher";
 export default async function LookFeature() {
   const products = await getProductsBySlugs(look.items);
   const items: LookItem[] = products.map((p) => ({
+    slug: p.slug,
     name: p.name,
     priceMAD: p.priceMAD,
     priceByFit: p.priceByFit,
+    card: p.card,
   }));
 
   return (

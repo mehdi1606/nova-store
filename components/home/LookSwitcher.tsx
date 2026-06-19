@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { animate, useMotionValue } from "framer-motion";
 import { formatMAD, cn } from "@/lib/utils";
+import { useCart } from "@/lib/cart";
+import type { ImageRef } from "@/lib/images";
 import { IconCheck } from "@/components/Icons";
 import Reveal from "@/components/ui/Reveal";
 import CTA from "@/components/ui/CTA";
@@ -10,9 +12,11 @@ import CTA from "@/components/ui/CTA";
 type Fit = "Femme" | "Homme";
 
 export type LookItem = {
+  slug: string;
   name: string;
   priceMAD: number;
   priceByFit?: Partial<Record<Fit, number>>;
+  card: ImageRef;
 };
 
 /** A Dhs amount that smoothly counts to its latest value. */
@@ -39,10 +43,32 @@ export default function LookSwitcher({
 }) {
   const hasFits = items.some((i) => i.priceByFit);
   const [fit, setFit] = useState<Fit>("Femme");
+  const add = useCart((s) => s.add);
 
   const priceOf = (i: LookItem) => i.priceByFit?.[fit] ?? i.priceMAD;
   const full = items.reduce((sum, i) => sum + priceOf(i), 0);
   const bundled = full - savings;
+
+  // One click → the whole look lands in the cart with the chosen fit, and the
+  // cart drawer opens automatically. Sizes are confirmed with the customer after.
+  const composeLook = () => {
+    for (const it of items) {
+      const itemFit = it.priceByFit ? fit : undefined;
+      add(
+        {
+          id: [it.slug, itemFit].filter(Boolean).join("-"),
+          slug: it.slug,
+          name: it.name,
+          price: priceOf(it),
+          image: it.card,
+          color: "Marine",
+          fit: itemFit,
+          href: `/produit/${it.slug}`,
+        },
+        1,
+      );
+    }
+  };
 
   return (
     <>
@@ -101,7 +127,7 @@ export default function LookSwitcher({
 
       <Reveal delay={0.25}>
         <div className="mt-9">
-          <CTA href="/boutique#look" variant="light">
+          <CTA onClick={composeLook} variant="light">
             Composer le look
           </CTA>
         </div>
