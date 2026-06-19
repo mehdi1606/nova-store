@@ -1,8 +1,14 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useScroll,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import DarkHero from "@/components/DarkHero";
 import SmartImage from "@/components/ui/SmartImage";
 import MaskedHeading from "@/components/ui/MaskedHeading";
@@ -10,6 +16,14 @@ import CTA from "@/components/ui/CTA";
 import HorseMark from "@/components/HorseMark";
 import { IconArrowRight } from "@/components/Icons";
 import { EASE } from "@/lib/utils";
+import type { ImageKey } from "@/lib/images";
+
+/** The hero glides automatically through these (none on a white background). */
+const SLIDES: { image: ImageKey; position: string }[] = [
+  { image: "veste-lifestyle", position: "50% 35%" },
+  { image: "ed-1", position: "50% 28%" },
+  { image: "cat-cheval", position: "50% 30%" },
+];
 
 export default function Hero() {
   const reduce = useReducedMotion();
@@ -22,6 +36,19 @@ export default function Hero() {
   const scale = useTransform(scrollYProgress, [0, 1], [1, reduce ? 1 : 1.14]);
   const fade = useTransform(scrollYProgress, [0, 0.85], [1, 0]);
 
+  // Auto-advance the slideshow (paused for reduced motion).
+  const [index, setIndex] = useState(0);
+  useEffect(() => {
+    if (reduce) return;
+    const id = setInterval(
+      () => setIndex((i) => (i + 1) % SLIDES.length),
+      5000,
+    );
+    return () => clearInterval(id);
+  }, [reduce]);
+
+  const slide = SLIDES[index];
+
   return (
     <section
       ref={ref}
@@ -29,15 +56,27 @@ export default function Hero() {
     >
       <DarkHero />
 
+      {/* auto-advancing horizontal slideshow */}
       <motion.div style={{ y, scale }} className="absolute inset-0">
-        <SmartImage
-          image="hero-rider-horse"
-          priority
-          fill
-          sizes="100vw"
-          position="50% 28%"
-          className="h-full w-full"
-        />
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={index}
+            className="absolute inset-0"
+            initial={reduce ? { opacity: 0 } : { x: "100%" }}
+            animate={reduce ? { opacity: 1 } : { x: "0%" }}
+            exit={reduce ? { opacity: 0 } : { x: "-100%" }}
+            transition={{ duration: 1.1, ease: EASE }}
+          >
+            <SmartImage
+              image={slide.image}
+              priority={index === 0}
+              fill
+              sizes="100vw"
+              position={slide.position}
+              className="h-full w-full"
+            />
+          </motion.div>
+        </AnimatePresence>
       </motion.div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-ink-deep/45 via-ink-deep/15 to-ink-deep/85" />
@@ -93,6 +132,21 @@ export default function Hero() {
           </Link>
         </motion.div>
       </motion.div>
+
+      {/* slide indicators */}
+      <div className="absolute bottom-6 right-6 z-10 flex gap-2 sm:right-10">
+        {SLIDES.map((s, i) => (
+          <button
+            key={s.image}
+            onClick={() => setIndex(i)}
+            aria-label={`Image ${i + 1}`}
+            data-cursor="hover"
+            className={`h-1.5 rounded-full transition-all duration-500 ${
+              index === i ? "w-7 bg-paper" : "w-1.5 bg-paper/40 hover:bg-paper/70"
+            }`}
+          />
+        ))}
+      </div>
 
       <motion.div
         style={{ opacity: fade }}

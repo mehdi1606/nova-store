@@ -36,8 +36,8 @@ const featured: Story = {
 
 const stories: Story[] = [
   {
-    image: "ed-bw-1",
-    position: "50% 28%",
+    image: "hero-arena",
+    position: "50% 30%",
     category: "Portrait",
     date: "Mars 2026",
     title: "Celles qui montent à l'aube",
@@ -81,8 +81,8 @@ const stories: Story[] = [
       "Un cheval gris, une cavalière, la brume. La relation avant la performance — c'est là que tout commence pour la maison.",
   },
   {
-    image: "ed-stable",
-    position: "50% 40%",
+    image: "hero-grey-walk",
+    position: "50% 30%",
     category: "Lieu",
     date: "Janvier 2026",
     title: "Une maison enracinée au Maroc",

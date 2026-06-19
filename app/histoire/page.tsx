@@ -53,13 +53,6 @@ const chapters: {
   },
 ];
 
-const timeline = [
-  { year: "2026", label: "Naissance de la maison" },
-  { year: "2019", label: "Le cheval brodé" },
-  { year: "2022", label: "La Riding Team" },
-  { year: "2026", label: "Collection capsule" },
-];
-
 const values = [
   {
     title: "Le lien",
@@ -177,36 +170,6 @@ export default function HistoirePage() {
               La maison Nova Cavalia
             </span>
           </Reveal>
-        </div>
-      </section>
-
-      {/* timeline — large numerals, hairline ruled cells, header row */}
-      <section className="section-y-sm bg-paper">
-        <div className="edge-x">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <MaskedHeading
-              lines={["Quatre dates,", "une trajectoire."]}
-              className="font-display text-[clamp(1.8rem,3.6vw,2.8rem)] font-[380] leading-[1.04] text-ink"
-            />
-            <span className="label-xs text-ink/45">2026 — 2026</span>
-          </div>
-          <div className="mt-12 grid grid-cols-2 gap-x-8 lg:grid-cols-4 lg:gap-x-12">
-            {timeline.map((t, i) => (
-              <Reveal
-                key={t.year}
-                delay={i * 0.08}
-                amount={0.4}
-                className="border-t border-ink/15 py-8"
-              >
-                <p className="font-display text-[clamp(2.6rem,5vw,4.2rem)] font-[380] leading-none text-ink">
-                  {t.year}
-                </p>
-                <p className="mt-4 max-w-[18ch] text-sm leading-snug text-ink/60">
-                  {t.label}
-                </p>
-              </Reveal>
-            ))}
-          </div>
         </div>
       </section>
 

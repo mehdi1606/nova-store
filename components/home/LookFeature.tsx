@@ -1,16 +1,17 @@
 import MediaFrame from "@/components/ui/MediaFrame";
 import MaskedHeading from "@/components/ui/MaskedHeading";
 import Reveal from "@/components/ui/Reveal";
-import CTA from "@/components/ui/CTA";
-import { IconCheck } from "@/components/Icons";
 import { look } from "@/content/products";
-import { getLookTotals, getProductsBySlugs } from "@/lib/catalog";
-import { formatMAD } from "@/lib/utils";
+import { getProductsBySlugs } from "@/lib/catalog";
+import LookSwitcher, { type LookItem } from "./LookSwitcher";
 
 export default async function LookFeature() {
-  const { full, bundled } = await getLookTotals();
-  const saved = full - bundled;
-  const items = await getProductsBySlugs(look.items);
+  const products = await getProductsBySlugs(look.items);
+  const items: LookItem[] = products.map((p) => ({
+    name: p.name,
+    priceMAD: p.priceMAD,
+    priceByFit: p.priceByFit,
+  }));
 
   return (
     <section className="section-y relative overflow-hidden bg-ink-deep text-paper">
@@ -49,46 +50,7 @@ export default async function LookFeature() {
             </p>
           </Reveal>
 
-          <Reveal delay={0.15}>
-            <ul className="mt-9 space-y-3 border-t border-paper/12 pt-7">
-              {items.map((p) => (
-                <li
-                  key={p.slug}
-                  className="flex items-center justify-between gap-4"
-                >
-                  <span className="flex items-center gap-3 text-paper/85">
-                    <IconCheck className="size-4 text-or" />
-                    {p.name}
-                  </span>
-                  <span className="label-xs tabular-nums text-stone">
-                    {formatMAD(p.priceMAD)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-
-          <Reveal delay={0.2}>
-            <div className="mt-8 flex flex-wrap items-end gap-x-5 gap-y-2">
-              <span className="font-display text-4xl font-[380] tabular-nums">
-                {formatMAD(bundled)}
-              </span>
-              <span className="text-lg text-stone line-through tabular-nums">
-                {formatMAD(full)}
-              </span>
-              <span className="label-xs rounded-full border border-or/35 px-3.5 py-1.5 text-or-soft">
-                Économisez {formatMAD(saved)}
-              </span>
-            </div>
-          </Reveal>
-
-          <Reveal delay={0.25}>
-            <div className="mt-9">
-              <CTA href="/boutique#look" variant="light">
-                Composer le look
-              </CTA>
-            </div>
-          </Reveal>
+          <LookSwitcher items={items} savings={look.savings} />
         </div>
       </div>
     </section>
