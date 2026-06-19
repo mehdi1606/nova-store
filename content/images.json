@@ -37,12 +37,12 @@
   },
   "stable-atmosphere": {
     "src": "/images/stable-atmosphere.webp",
-    "w": 1733,
-    "h": 2600,
-    "blur": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQBACdASoQABgAPu1iqU2ppaOiMAgBMB2JZQC7ACIJewUy6tCUwzzXAADNY/yHbcGw04E7cZORVTgtOmypUXK6Rhh46xOKI0PJn82gZrxlf0YemPB8piwhYGtEdJlcM9gAAA==",
-    "alt": "Atmosphere d ecurie, lumiere tamisee",
+    "w": 1333,
+    "h": 2000,
+    "blur": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAABwBACdASoQABgAPu1krU6ppaSiMAgBMB2JZgCdMoAKB49LAbQKVxClNPwQAAD+PjqGx18+E3PQfOvIrbOtY8cFP3NWS4LP3O9MAtc3lpXLlQc9ck37pqXBnQjJUR5L2z37XssWlTCAg/1ugAA=",
+    "alt": "Cavalier et son cheval à l'écurie",
     "role": "hero",
-    "source": "DSC03950.jpg"
+    "source": "DSC03940.webp"
   },
   "cat-cavalier": {
     "src": "/images/cat-cavalier.webp",
