@@ -70,7 +70,8 @@ export function buildWhatsAppMessage(o: OrderInput): string {
   const total = o.subtotal - discount;
   if (discount > 0) {
     lines.push(`Sous-total : ${formatMAD(o.subtotal)}`);
-    lines.push(`Code promo ${o.promo_code ?? ""} : -${formatMAD(discount)}`);
+    const label = o.promo_code ? `Remise (${o.promo_code})` : "Remise";
+    lines.push(`${label} : -${formatMAD(discount)}`);
   }
   lines.push(`Total : ${formatMAD(total)}`);
   lines.push(

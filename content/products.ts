@@ -23,6 +23,8 @@ export type Product = {
   fits?: Fit[];
   sizes?: SizeOption[];
   sizesByFit?: Partial<Record<Fit, SizeOption[]>>;
+  /** optional per-fit size-chart images shown in the size guide */
+  sizeChartByFit?: Partial<Record<Fit, ImageRef>>;
   sizeType: "vetement" | "accessoire";
   sizeNote: string;
   hero: ImageRef;
@@ -68,6 +70,10 @@ export const products: Product[] = [
     sizesByFit: {
       Femme: vetSizes(["34", "36", "38", "40", "42", "44"], ["34"]),
       Homme: vetSizes(["44", "46", "48", "50", "52", "54"], ["54"]),
+    },
+    sizeChartByFit: {
+      Femme: "taille-veste-femme",
+      Homme: "taille-veste-homme",
     },
     sizeType: "vetement",
     sizeNote: "Coupe ajustée. Si vous hésitez, prenez votre taille habituelle.",

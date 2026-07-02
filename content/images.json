@@ -484,5 +484,23 @@
     "alt": "Sweat Nova Cavalia, scène d'écurie",
     "role": "product",
     "source": "DSC03785.webp"
+  },
+  "taille-veste-femme": {
+    "src": "/images/taille-veste-femme.webp",
+    "w": 900,
+    "h": 1600,
+    "blur": "data:image/webp;base64,UklGRjQAAABXRUJQVlA4ICgAAADQAgCdASoNABgAPu1iqU2ppaOjMAgBMB2JaQAAfKAAAP7w0sMaKwAA",
+    "alt": "Guide des tailles femme — Veste de Concours",
+    "role": "product",
+    "source": "taille_woman_viste.webp"
+  },
+  "taille-veste-homme": {
+    "src": "/images/taille-veste-homme.webp",
+    "w": 900,
+    "h": 1600,
+    "blur": "data:image/webp;base64,UklGRjYAAABXRUJQVlA4ICoAAADQAgCdASoNABgAPu1iqU2ppaOiMAgBMB2JaQAAfKAAAP7wv6zxt8wAAAA=",
+    "alt": "Guide des tailles homme — Veste de Concours",
+    "role": "product",
+    "source": "taille_man_viste.webp"
   }
 }

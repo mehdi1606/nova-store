@@ -44,6 +44,7 @@ export default function LookSwitcher({
   const hasFits = items.some((i) => i.priceByFit);
   const [fit, setFit] = useState<Fit>("Femme");
   const add = useCart((s) => s.add);
+  const setDiscount = useCart((s) => s.setDiscount);
 
   const priceOf = (i: LookItem) => i.priceByFit?.[fit] ?? i.priceMAD;
   const full = items.reduce((sum, i) => sum + priceOf(i), 0);
@@ -68,6 +69,8 @@ export default function LookSwitcher({
         1,
       );
     }
+    // Carry the same bundle saving shown above into the cart total.
+    setDiscount(savings, "Remise look");
   };
 
   return (

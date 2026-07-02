@@ -22,10 +22,13 @@ export default function CartView() {
   const items = useCart((s) => s.items);
   const remove = useCart((s) => s.remove);
   const setQty = useCart((s) => s.setQty);
+  const discount = useCart((s) => s.discount);
+  const discountLabel = useCart((s) => s.discountLabel);
 
   useEffect(() => setMounted(true), []);
 
   const subtotal = cartSubtotal(items);
+  const total = Math.max(0, subtotal - discount);
   const count = cartCount(items);
   const remaining = Math.max(0, FREE_SHIPPING - subtotal);
 
@@ -144,6 +147,12 @@ export default function CartView() {
                 <dt className="text-ink/65">Sous-total</dt>
                 <dd className="tabular-nums text-ink">{formatMAD(subtotal)}</dd>
               </div>
+              {discount > 0 && (
+                <div className="flex justify-between text-leather">
+                  <dt>{discountLabel ?? "Remise"}</dt>
+                  <dd className="tabular-nums">−{formatMAD(discount)}</dd>
+                </div>
+              )}
               <div className="flex justify-between">
                 <dt className="text-ink/65">Livraison</dt>
                 <dd className="text-ink">
@@ -162,7 +171,7 @@ export default function CartView() {
             <div className="mt-6 flex items-baseline justify-between border-t border-ink/12 pt-5">
               <span className="label-xs text-ink">Total</span>
               <span className="font-display text-2xl font-[380] tabular-nums text-ink">
-                {formatMAD(subtotal)}
+                {formatMAD(total)}
               </span>
             </div>
 

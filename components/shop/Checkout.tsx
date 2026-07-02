@@ -50,6 +50,8 @@ export default function Checkout() {
   const [mounted, setMounted] = useState(false);
   const items = useCart((s) => s.items);
   const clear = useCart((s) => s.clear);
+  const lookDiscount = useCart((s) => s.discount);
+  const lookLabel = useCart((s) => s.discountLabel);
   useEffect(() => setMounted(true), []);
 
   const [name, setName] = useState("");
@@ -74,9 +76,10 @@ export default function Checkout() {
   const subtotal = cartSubtotal(items);
   const count = cartCount(items);
   const freeShipping = subtotal >= FREE_SHIPPING;
-  const discount = applied
+  const promoDisc = applied
     ? promoDiscount(subtotal, applied.kind, applied.value)
     : 0;
+  const discount = Math.min(subtotal, lookDiscount + promoDisc);
   const total = subtotal - discount;
 
   const onApplyPromo = async () => {
@@ -388,10 +391,16 @@ export default function Checkout() {
                 <dt className="text-ink/65">Sous-total</dt>
                 <dd className="tabular-nums text-ink">{formatMAD(subtotal)}</dd>
               </div>
-              {discount > 0 && (
+              {lookDiscount > 0 && (
+                <div className="flex justify-between text-leather">
+                  <dt>{lookLabel ?? "Remise look"}</dt>
+                  <dd className="tabular-nums">−{formatMAD(lookDiscount)}</dd>
+                </div>
+              )}
+              {promoDisc > 0 && (
                 <div className="flex justify-between text-leather">
                   <dt>Réduction · {applied?.code}</dt>
-                  <dd className="tabular-nums">−{formatMAD(discount)}</dd>
+                  <dd className="tabular-nums">−{formatMAD(promoDisc)}</dd>
                 </div>
               )}
               <div className="flex justify-between">

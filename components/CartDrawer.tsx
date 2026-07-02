@@ -19,8 +19,11 @@ export default function CartDrawer() {
   const items = useCart((s) => s.items);
   const remove = useCart((s) => s.remove);
   const setQty = useCart((s) => s.setQty);
+  const discount = useCart((s) => s.discount);
+  const discountLabel = useCart((s) => s.discountLabel);
 
   const subtotal = cartSubtotal(items);
+  const total = Math.max(0, subtotal - discount);
   const count = cartCount(items);
   const remaining = Math.max(0, FREE_SHIPPING - subtotal);
   const pct = Math.min(100, (subtotal / FREE_SHIPPING) * 100);
@@ -211,10 +214,24 @@ export default function CartDrawer() {
             {/* footer */}
             {count > 0 && (
               <div className="border-t border-ink/10 px-6 py-5">
+                {discount > 0 && (
+                  <div className="mb-2 space-y-1 text-sm">
+                    <div className="flex items-baseline justify-between text-ink/65">
+                      <span>Sous-total</span>
+                      <span className="tabular-nums">{formatMAD(subtotal)}</span>
+                    </div>
+                    <div className="flex items-baseline justify-between text-leather">
+                      <span>{discountLabel ?? "Remise"}</span>
+                      <span className="tabular-nums">−{formatMAD(discount)}</span>
+                    </div>
+                  </div>
+                )}
                 <div className="flex items-baseline justify-between">
-                  <span className="label-xs text-stone">Sous-total</span>
+                  <span className="label-xs text-stone">
+                    {discount > 0 ? "Total" : "Sous-total"}
+                  </span>
                   <span className="font-display text-xl font-[380] tabular-nums">
-                    {formatMAD(subtotal)}
+                    {formatMAD(total)}
                   </span>
                 </div>
                 <p className="mt-1 text-[0.72rem] text-ink/55">

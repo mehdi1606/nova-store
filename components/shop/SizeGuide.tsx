@@ -4,8 +4,10 @@ import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useEffect } from "react";
 import { IconClose } from "@/components/Icons";
 import { lockScroll } from "@/lib/lenis";
+import { useFit } from "@/lib/fit";
 import { EASE } from "@/lib/utils";
-import type { Product } from "@/content/products";
+import SmartImage from "@/components/ui/SmartImage";
+import type { Product, Fit } from "@/content/products";
 
 const VET: Record<string, { poitrine: string; taille: string }> = {
   XS: { poitrine: "84", taille: "66" },
@@ -41,6 +43,12 @@ export default function SizeGuide({
   onClose: () => void;
 }) {
   const reduce = useReducedMotion();
+  const fit = useFit((s) => s.fit) as Fit | undefined;
+
+  // The fit-specific size chart (woman for Femme, man for Homme).
+  const charts = product.sizeChartByFit;
+  const chart =
+    (fit && charts?.[fit]) ?? (charts ? Object.values(charts)[0] : undefined);
 
   useEffect(() => {
     if (!open) return;
@@ -105,6 +113,16 @@ export default function SizeGuide({
 
               {product.sizeType === "vetement" ? (
                 <>
+                  {chart && (
+                    <div className="mt-6 overflow-hidden rounded-[2px] border border-ink/10">
+                      <SmartImage
+                        image={chart}
+                        fill={false}
+                        sizes="(min-width: 480px) 460px, 90vw"
+                        className="h-auto w-full"
+                      />
+                    </div>
+                  )}
                   <table className="mt-7 w-full border-collapse text-sm">
                     <thead>
                       <tr className="border-b border-ink/15 text-left">
