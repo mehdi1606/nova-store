@@ -190,7 +190,7 @@ export default function ProductForm({
               name="price_mad"
               type="number"
               min="0"
-              step="10"
+              step="1"
               defaultValue={initial?.price_mad ?? ""}
               className={inputCls}
             />
