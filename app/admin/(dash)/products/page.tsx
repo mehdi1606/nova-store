@@ -62,8 +62,13 @@ export default async function AdminProducts({
       <div className="mt-3 divide-y divide-ink/10 border-y border-ink/10">
         {staticProducts.map((p) => {
           const o = overrides.get(p.slug);
-          const price = o?.price_mad ?? p.priceMAD;
+          const dbFit = o?.price_by_fit as Record<string, number> | null;
+          const fitPrices = dbFit ?? p.priceByFit;
+          const basePrice = o?.price_mad ?? p.priceMAD;
           const name = o?.name ?? p.name;
+          const priceLabel = fitPrices
+            ? `${formatMAD(fitPrices.Femme ?? basePrice)} / ${formatMAD(fitPrices.Homme ?? basePrice)}`
+            : formatMAD(basePrice);
           return (
             <Link
               key={p.slug}
@@ -76,7 +81,7 @@ export default async function AdminProducts({
                 <p className="text-sm text-ink/50">/{p.slug}</p>
               </div>
               <span className="shrink-0 font-display text-lg tabular-nums">
-                {formatMAD(price)}
+                {priceLabel}
               </span>
             </Link>
           );

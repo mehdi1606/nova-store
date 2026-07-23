@@ -26,6 +26,7 @@ alter table public.products add column if not exists card_image text;
 alter table public.products add column if not exists hero_image text;
 alter table public.products add column if not exists gallery    jsonb default '[]'::jsonb;
 alter table public.products add column if not exists sizes      text;
+alter table public.products add column if not exists price_by_fit jsonb;
 
 -- ── Contact-form messages ───────────────────────────────────────────────────
 create table if not exists public.messages (

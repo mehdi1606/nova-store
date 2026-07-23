@@ -88,15 +88,19 @@ export default async function EditProduct({
 
   // ── Built-in product → live override (text / price / visibility) ───────────
   const p = base!;
+  const dbFitPrices = row?.price_by_fit as Record<string, number> | null;
   const v = {
     name: row?.name ?? p.name,
     tagline: row?.tagline ?? p.tagline,
     short_desc: row?.short_desc ?? p.shortDesc,
     description: row?.description ?? p.description,
     price_mad: row?.price_mad ?? p.priceMAD,
+    price_femme: dbFitPrices?.Femme ?? p.priceByFit?.Femme ?? null,
+    price_homme: dbFitPrices?.Homme ?? p.priceByFit?.Homme ?? null,
     active: row?.active ?? true,
     sort_order: row?.sort_order ?? staticProducts.findIndex((x) => x.slug === slug),
   };
+  const hasFits = Boolean(p.fits?.length);
 
   return (
     <div className="max-w-2xl">
@@ -115,16 +119,41 @@ export default async function EditProduct({
         <Field label="Accroche">
           <input name="tagline" defaultValue={v.tagline} className={inputCls} />
         </Field>
-        <Field label="Prix (Dhs)">
-          <input
-            name="price_mad"
-            type="number"
-            min="0"
-            step="1"
-            defaultValue={v.price_mad}
-            className={inputCls}
-          />
-        </Field>
+        {hasFits ? (
+          <div className="flex gap-6">
+            <Field label="Prix Femme (Dhs)">
+              <input
+                name="price_femme"
+                type="number"
+                min="0"
+                step="1"
+                defaultValue={v.price_femme ?? ""}
+                className={inputCls}
+              />
+            </Field>
+            <Field label="Prix Homme (Dhs)">
+              <input
+                name="price_homme"
+                type="number"
+                min="0"
+                step="1"
+                defaultValue={v.price_homme ?? ""}
+                className={inputCls}
+              />
+            </Field>
+          </div>
+        ) : (
+          <Field label="Prix (Dhs)">
+            <input
+              name="price_mad"
+              type="number"
+              min="0"
+              step="1"
+              defaultValue={v.price_mad}
+              className={inputCls}
+            />
+          </Field>
+        )}
         <Field label="Description courte">
           <textarea
             name="short_desc"

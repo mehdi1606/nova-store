@@ -50,17 +50,30 @@ export async function upsertProduct(formData: FormData) {
     return Number.isFinite(n) ? n : null;
   };
 
-  const row = {
+  const priceFemme = int("price_femme");
+  const priceHomme = int("price_homme");
+  const hasFitPrices = priceFemme != null || priceHomme != null;
+
+  const row: Record<string, unknown> = {
     slug,
     name: str("name"),
     tagline: str("tagline"),
     short_desc: str("short_desc"),
     description: str("description"),
-    price_mad: int("price_mad"),
+    price_mad: hasFitPrices
+      ? Math.min(...[priceFemme, priceHomme].filter((n): n is number => n != null))
+      : int("price_mad"),
     active: formData.get("active") === "on",
     sort_order: int("sort_order") ?? 0,
     updated_at: new Date().toISOString(),
   };
+
+  if (hasFitPrices) {
+    const fitPrices: Record<string, number> = {};
+    if (priceFemme != null) fitPrices.Femme = priceFemme;
+    if (priceHomme != null) fitPrices.Homme = priceHomme;
+    row.price_by_fit = fitPrices;
+  }
 
   const { error } = await supabase
     .from("products")

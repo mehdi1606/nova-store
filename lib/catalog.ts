@@ -3,6 +3,7 @@ import {
   products as staticProducts,
   look,
   type Product,
+  type Fit,
   type SizeOption,
 } from "@/content/products";
 import { isSupabaseConfigured } from "./supabase/config";
@@ -29,6 +30,7 @@ export type ProductRow = {
   short_desc: string | null;
   description: string | null;
   price_mad: number | null;
+  price_by_fit: Record<string, number> | null;
   active: boolean | null;
   sort_order: number | null;
   category: string | null;
@@ -42,13 +44,17 @@ export type ProductRow = {
 export type ProductOverride = ProductRow;
 
 const SELECT =
-  "slug,name,tagline,short_desc,description,price_mad,active,sort_order,category,card_image,hero_image,gallery,sizes";
+  "slug,name,tagline,short_desc,description,price_mad,price_by_fit,active,sort_order,category,card_image,hero_image,gallery,sizes";
 
 const staticIndex = new Map(staticProducts.map((p, i) => [p.slug, i]));
 const staticBySlug = new Map(staticProducts.map((p) => [p.slug, p]));
 
 function applyOverride(p: Product, o?: ProductRow): Product {
   if (!o) return p;
+  const priceByFit =
+    o.price_by_fit && Object.keys(o.price_by_fit).length
+      ? (o.price_by_fit as Partial<Record<Fit, number>>)
+      : p.priceByFit;
   return {
     ...p,
     name: o.name ?? p.name,
@@ -56,6 +62,7 @@ function applyOverride(p: Product, o?: ProductRow): Product {
     shortDesc: o.short_desc ?? p.shortDesc,
     description: o.description ?? p.description,
     priceMAD: o.price_mad ?? p.priceMAD,
+    ...(priceByFit ? { priceByFit } : {}),
   };
 }
 
