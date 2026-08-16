@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: "Le Journal",
   description:
     "Le journal Nova Cavalia — éditoriaux, coulisses de l'écurie et regards sur la collection capsule 2026. Le cheval, le cavalier, et le geste qui les habille.",
+  alternates: { canonical: "/journal" },
 };
 
 type Story = {

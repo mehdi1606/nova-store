@@ -355,7 +355,7 @@ export default function Checkout() {
                     }
                   }}
                   placeholder="Votre code"
-                  className="w-full rounded-[2px] border border-ink/20 bg-paper px-3 py-2 text-sm uppercase placeholder:normal-case placeholder:text-ink/35 focus:border-ink focus:outline-none"
+                  className="w-full rounded-[2px] border border-ink/20 bg-paper px-3 py-2 text-base uppercase placeholder:normal-case placeholder:text-ink/35 focus:border-ink focus:outline-none"
                 />
                 <button
                   type="button"

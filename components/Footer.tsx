@@ -83,7 +83,7 @@ export default function Footer() {
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="Votre adresse e-mail"
                     aria-label="Votre adresse e-mail"
-                    className="w-full bg-transparent text-sm text-paper placeholder:text-stone/60 focus:outline-none"
+                    className="w-full bg-transparent text-base text-paper placeholder:text-stone/60 focus:outline-none"
                   />
                   <button
                     type="submit"

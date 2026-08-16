@@ -1,19 +1,20 @@
 import type { NextConfig } from "next";
 import path from "node:path";
 
+const securityHeaders = [
+  { key: "X-DNS-Prefetch-Control", value: "on" },
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+];
+
 const nextConfig: NextConfig = {
-  // Pin the tracing root to this project so the stray lockfile in the
-  // user's home directory doesn't get picked as the workspace root.
   outputFileTracingRoot: path.join(__dirname),
-  // Allow an isolated build dir (set NEXT_DIST_DIR) so a production build
-  // can run without clobbering a dev server already using .next.
   distDir: process.env.NEXT_DIST_DIR || ".next",
   images: {
     formats: ["image/avif", "image/webp"],
-    // Cache optimised images on Vercel's CDN for a year so repeat visits and
-    // re-renders serve instantly instead of re-optimising on every request.
     minimumCacheTTL: 31536000,
-    // Product photos uploaded from the dashboard live in Supabase Storage.
     remotePatterns: [
       {
         protocol: "https",
@@ -21,6 +22,9 @@ const nextConfig: NextConfig = {
         pathname: "/storage/v1/object/public/**",
       },
     ],
+  },
+  async headers() {
+    return [{ source: "/(.*)", headers: securityHeaders }];
   },
 };
 

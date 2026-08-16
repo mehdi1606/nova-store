@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Hero from "@/components/home/Hero";
 import Defile from "@/components/home/Defile";
 import Manifesto from "@/components/home/Manifesto";
@@ -12,6 +13,10 @@ import Newsletter from "@/components/home/Newsletter";
 import { getCatalog } from "@/lib/catalog";
 
 export const revalidate = 300;
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default async function Home() {
   const products = await getCatalog();

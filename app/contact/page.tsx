@@ -16,6 +16,7 @@ export const metadata: Metadata = {
   title: "Contact",
   description:
     "Une question sur une pièce, une taille ou une commande ? Écrivez à la maison Nova Cavalia. Réponse sous 48 heures — livraison partout au Maroc.",
+  alternates: { canonical: "/contact" },
 };
 
 const channels = [

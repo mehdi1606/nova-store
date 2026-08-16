@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: "Notre Histoire",
   description:
     "Nova Cavalia, maison équestre née au Maroc en 2026. L'histoire d'un cheval brodé, d'un lien entre le cavalier et sa monture, et d'une élégance qui se reconnaît sans se montrer.",
+  alternates: { canonical: "/histoire" },
 };
 
 const chapters: {

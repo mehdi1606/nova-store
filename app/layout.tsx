@@ -41,7 +41,6 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "Nova Cavalia" }],
   creator: "Nova Cavalia",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: "fr_MA",
@@ -76,6 +75,21 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Nova Cavalia",
+  url: SITE,
+  logo: `${SITE}/logo-ink.png`,
+  sameAs: ["https://instagram.com/novacavalia"],
+  contactPoint: {
+    "@type": "ContactPoint",
+    email: "contact@novacavalia.com",
+    contactType: "customer service",
+    availableLanguage: "French",
+  },
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
@@ -86,6 +100,10 @@ export default function RootLayout({
       className={`${fraunces.variable} ${hanken.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="grain flex min-h-screen flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(orgJsonLd) }}
+        />
         <AppShell>{children}</AppShell>
       </body>
     </html>

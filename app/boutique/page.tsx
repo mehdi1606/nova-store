@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   title: "La Boutique",
   description:
     "La collection capsule 2026 Nova Cavalia : veste de concours, tapis de selle et sweat, signés d'un cheval brodé. Pour le cavalier et sa monture.",
+  alternates: { canonical: "/boutique" },
 };
 
 const tabs = [

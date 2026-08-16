@@ -36,6 +36,12 @@ export async function generateMetadata({
       description: p.shortDesc,
       images: [{ url: hero.src, width: hero.w, height: hero.h, alt: hero.alt }],
     },
+    twitter: {
+      card: "summary_large_image",
+      title: `${p.name} · Nova Cavalia`,
+      description: p.shortDesc,
+      images: [hero.src],
+    },
   };
 }
 
@@ -54,12 +60,16 @@ export default async function ProductPage({
     name: product.name,
     description: product.shortDesc,
     image: [imgRef(product.hero).src],
+    sku: product.slug,
+    url: `https://novacavalia.com/produit/${product.slug}`,
     brand: { "@type": "Brand", name: "Nova Cavalia" },
     offers: {
       "@type": "Offer",
       priceCurrency: "MAD",
       price: product.priceMAD,
       availability: "https://schema.org/InStock",
+      itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: "Nova Cavalia" },
     },
   };
 
