@@ -19,12 +19,20 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (!isSupabaseConfigured) redirect("/admin/login");
+  if (!isSupabaseConfigured) {
+    console.log("[dash/layout] isSupabaseConfigured=false → redirect /admin/login");
+    redirect("/admin/login");
+  }
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  console.log(
+    `[dash/layout] getUser → hasUser=${Boolean(user)} | isOwner=${isOwner(user?.email)}`
+  );
+
   if (!isOwner(user?.email)) redirect("/admin/login");
 
   return (
