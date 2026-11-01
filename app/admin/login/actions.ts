@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isOwner, isSupabaseConfigured } from "@/lib/supabase/config";
+import { ADMIN_EMAIL, isOwner, isSupabaseConfigured } from "@/lib/supabase/config";
 
 export type LoginState = {
   error: string | null;
@@ -53,7 +53,11 @@ export async function loginAction(
 
   // Verify this account is the configured owner
   if (!isOwner(data.user?.email)) {
-    console.log("[loginAction] Compte non autorisé — signOut");
+    const mask = (e: string) => e.replace(/^(.{2}).*(@.*)$/, "$1***$2");
+    console.log(
+      `[loginAction] Compte non autorisé — compte=${mask(data.user?.email ?? "")}` +
+      ` | NEXT_PUBLIC_ADMIN_EMAIL=${mask(ADMIN_EMAIL)} (longueur ${ADMIN_EMAIL.length})`
+    );
     await supabase.auth.signOut();
     return { error: "Ce compte n'est pas autorisé à accéder à l'administration." };
   }
